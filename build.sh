@@ -1,16 +1,16 @@
 set -e
 cd /github/home
 echo Install dependencies.
-echo deb http://deb.debian.org/debian bookworm-backports main >> /etc/apt/sources.list
+echo deb http://deb.debian.org/debian bullseye-backports main >> /etc/apt/sources.list
 apt-get update > /dev/null 2>&1
 apt-get install --allow-change-held-packages --allow-downgrades --allow-remove-essential \
 -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold -fy \
 cmake curl git libmaxminddb-dev ninja-build wget zlib1g-dev > /dev/null 2>&1
 apt-get install --allow-change-held-packages --allow-downgrades --allow-remove-essential \
 -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold -fy \
--t bookworm-backports golang > /dev/null 2>&1
+-t bullseye-backports golang > /dev/null 2>&1
 wget -qO /etc/apt/trusted.gpg.d/nginx_signing.asc https://nginx.org/keys/nginx_signing.key
-echo deb-src https://nginx.org/packages/mainline/debian bookworm nginx \
+echo deb-src https://nginx.org/packages/mainline/debian bullseye nginx \
 >> /etc/apt/sources.list
 echo -e 'Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900' \
 > /etc/apt/preferences.d/99nginx
@@ -39,7 +39,7 @@ git clone --depth 1 --recursive https://github.com/leev/ngx_http_geoip2_module >
 git clone --depth 1 --recursive https://github.com/openresty/headers-more-nginx-module > /dev/null 2>&1
 echo Build nginx.
 cd ..
-sed -i 's|NGINX Packaging <nginx-packaging@f5.com>|ononoki <me@ononoki.org>|g' control
+sed -i 's|NGINX Packaging|Nayem Ador <mail@nayemador.com>|g' control
 sed -i 's|CFLAGS=""|CFLAGS="-Wno-ignored-qualifiers"|g' rules
 sed -i 's|--sbin-path=/usr/sbin/nginx|--sbin-path=/usr/sbin/nginx --add-module=$(CURDIR)/debian/modules/ngx_brotli --add-module=$(CURDIR)/debian/modules/ngx_http_geoip2_module --add-module=$(CURDIR)/debian/modules/headers-more-nginx-module|g' rules
 sed -i 's|--with-cc-opt="$(CFLAGS)" --with-ld-opt="$(LDFLAGS)"|--with-cc-opt="-I../modules/boringssl/include $(CFLAGS)" --with-ld-opt="-L../modules/boringssl/build/ssl -L../modules/boringssl/build/crypto $(LDFLAGS)"|g' rules
